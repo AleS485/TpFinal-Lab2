@@ -8,4 +8,8 @@
     <UserSecretsId>dc84d9db-cd07-49e5-906f-1f174e2da5af</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.6.2" />
+  </ItemGroup>
+
 </Project>
