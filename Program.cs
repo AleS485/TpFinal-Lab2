@@ -1,7 +1,18 @@
+using TpFinal_Lab2.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<JuegoRepository>();
+builder.Services.AddScoped<ClienteRepository>();
+builder.Services.AddScoped<UsuarioRepository>();
+builder.Services.AddScoped<ImagenJuegoRepository>();
+builder.Services.AddScoped<DesarrolladoraRepository>();
+builder.Services.AddScoped<ResenaRepository>();
+builder.Services.AddScoped<VentaRepository>();
+builder.Services.AddScoped<DesarrolladoraRepository>();
+
 
 var app = builder.Build();
 
