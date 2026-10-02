@@ -1,0 +1,100 @@
+@model List<TpFinal_Lab2.Models.Desarrolladora>
+@{
+    ViewData["Title"] = "Ver Desarrolladoras";
+    var Pagina = ViewBag.Pagina ?? 1;
+    var HaySiguiente = ViewBag.HaySiguiente ?? false;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-light fw-bold">Desarrolladoras: </h2>
+        <a asp-action="Registrar" class="btn btn-light fw-semibold shadow-sm">➕ Cargar Desarrolladora </a>
+    </div>  
+
+    <div class="card shadow border-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0">
+                <thead>
+                    <tr class="table-dark">
+                        <th class="ps-3 py-3">ID</th>
+                        <th class="py-3">Nombre</th>
+                        <th class="py-3">Pagina Web</th>
+                        <th class="text-end pe-3 py-3">Opciones ⚙️</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @foreach (var desarrolladora in Model)
+                    {
+                        <tr>
+                            <td class="ps-3">
+                                <span class="badge bg-dark font-monospace">@desarrolladora.Id</span>
+                            </td>
+                            <td class="fw-semibold text-dark">@desarrolladora.Nombre</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(desarrolladora.Web))
+                                {
+                                    <a href="@desarrolladora.Web" target="_blank" class="text-primary text-decoration-none fw-semibold">
+                                        🌐 @desarrolladora.Web
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Sin web</span>
+                                }
+                            </td>
+                            <td class="text-end pe-3">
+                                <a asp-action="Eliminar" asp-route-id="@desarrolladora.Id" class="btn btn-sm btn-outline-danger rounded-pill px-3">❌ Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No hay desarrolladoras cargadas</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (Pagina > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link bg-dark text-light border-secondary" href="~/Desarrolladora/Listar?pagina=@(Pagina - 1)" aria-label="Anterior">
+                        Anterior
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link bg-dark text-secondary border-secondary">Anterior</span>
+                </li>
+            }
+
+            <li class="page-item active">
+                <span class="page-link bg-primary border-primary">@Pagina</span>
+            </li>
+
+            @if (HaySiguiente)
+            {
+                <li class="page-item">
+                    <a class="page-link bg-secondary border-secondary text-white fw-bold" href="~/Desarrolladora/Listar?pagina=@(Pagina + 1)" aria-label="Siguiente">
+                        Siguiente
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link bg-dark text-secondary border-secondary">Siguiente</span>
+                </li>
+            }
+        </ul>
+    </nav>
+
+
+</div>

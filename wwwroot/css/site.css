@@ -19,6 +19,9 @@ html {
 
 body {
   margin-bottom: 60px;
+  background: linear-gradient(135deg, #04010a 0%, #422493 100%);
+  color: #f8f9fa;
+  min-height: 100vh;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
