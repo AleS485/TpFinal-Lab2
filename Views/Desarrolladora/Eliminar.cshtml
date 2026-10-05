@@ -1,0 +1,26 @@
+@model TpFinal_Lab2.Models.Desarrolladora
+@{
+    ViewData["Title"] = "Eliminar Desarrolladora";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card bg-dark border-secondary shadow-lg">
+            <div class="card-body p-4 text-light">
+                <h3 class="mb-3 text-danger fw-bold">❌ Eliminar Desarrolladora</h3>
+                <p class="mb-4 text-secondary">
+                    Seguro de borrar esta desarrolladora?
+                </p>
+
+                <form asp-action="Eliminar" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Listar" class="btn btn-outline-secondary btn-sm px-3">Cancelar</a>
+                        <button type="submit" class="btn btn-danger px-4">Borrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

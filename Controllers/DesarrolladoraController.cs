@@ -1,30 +1,111 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TpFinal_Lab2.Models;
+using TpFinal_Lab2.Repositories;
 
 namespace TpFinal_Lab2.Controllers;
 
-public class DesarrolladoraController : Controller
+public class DesarrolladoraController(DesarrolladoraRepository desarrolladoraRepo) : Controller
 {
+
+    [HttpGet]
+    public IActionResult Registrar()
+    {
+        
+        return View();
+
+    }
+
+    [HttpPost]
+    public IActionResult Registrar(Desarrolladora desarrolladora)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(desarrolladora);
+        }
+        try
+        {
+            desarrolladoraRepo.Create(desarrolladora);
+            return RedirectToAction(nameof(Listar));
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e.Message);
+            return RedirectToAction(nameof(Listar));
+        }
+    }
+
+
     [HttpGet]
     public IActionResult Listar(int pagina = 1)
     {
-        var desarrolladoras = new List<Desarrolladora>
-        {
-            new Desarrolladora { Id = 1, Nombre = "Valve Corporation", Web = "https://www.valvesoftware.com" },
-            new Desarrolladora { Id = 2, Nombre = "Nintendo", Web = "https://www.nintendo.com" },
-            new Desarrolladora { Id = 3, Nombre = "Rockstar Games", Web = "https://www.rockstargames.com" },
-            new Desarrolladora { Id = 4, Nombre = "CD Projekt Red", Web = "https://en.cdprojektred.com" },
-            new Desarrolladora { Id = 5, Nombre = "FromSoftware", Web = "https://www.fromsoftware.jp" }
-        };
+        int tamano = 5;
+        var lista = desarrolladoraRepo.ListAll(pagina, tamano);
 
         ViewBag.Pagina = pagina;
-        ViewBag.HaySiguiente = true;
+        ViewBag.HaySiguiente = lista.Count == tamano;
 
-        return View(desarrolladoras);
+        return View(lista);
     }
 
-    
+    [HttpGet]
+    public IActionResult Editar(int id)
+    {
+        var desarrolladora = desarrolladoraRepo.FindById(id);
+        if(desarrolladora == null)
+        {
+            return RedirectToAction(nameof(Listar));
+        }
+        return View(desarrolladora);
+    }
+
+    [HttpPost]
+    public IActionResult Editar(Desarrolladora desarrolladora)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(desarrolladora);
+        }
+        try
+        {
+            desarrolladoraRepo.Update(desarrolladora);
+            return RedirectToAction(nameof(Listar));
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e.Message);
+            return RedirectToAction(nameof(Listar));
+        }
+    }
+
+
+    [HttpGet]
+    public IActionResult Eliminar(int id)
+    {
+        
+        var desarrolladora = desarrolladoraRepo.FindById(id);
+        if (desarrolladora == null)
+        {
+            return RedirectToAction(nameof(Listar));
+        }
+        return View(desarrolladora);
+
+    }
+
+    [HttpPost]
+    public IActionResult Eliminar(Desarrolladora desarrolladora)
+    {
+        try
+        {
+            desarrolladoraRepo.Delete(desarrolladora.Id);
+            return RedirectToAction(nameof(Listar));
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e.Message);
+            return RedirectToAction(nameof(Listar));
+        }
+    }
 
     
 }
