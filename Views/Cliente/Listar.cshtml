@@ -1,14 +1,18 @@
 @model List<TpFinal_Lab2.Models.Cliente>
 @{
     ViewData["Title"] = "Ver Clientes";
-    var Pagina = ViewBag.Pagina ?? 1;
-    var HaySiguiente = ViewBag.HaySiguiente ?? false;
 }
 
-<div class="container mt-4">
+<div id="app" class="container mt-4">
+
+    <div v-if="mensajeExito" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ mensajeExito }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-light fw-bold">Clientes: </h2>
-        <a asp-action="Registrar" class="btn btn-light fw-semibold shadow-sm">➕ Cargar Cliente </a>
+        <button class="btn btn-light fw-semibold shadow-sm" @@click="mostrarRegistrar">➕ Cargar Cliente </button>
     </div>  
 
     <div class="card shadow border-0">
@@ -26,71 +30,319 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white">
-                    @foreach (var cliente in Model)
-                    {
-                        <tr>
-                            <td class="ps-3">
-                                <span class="badge bg-dark font-monospace">@cliente.Id</span>
-                            </td>
-                            <td class="fw-semibold text-dark">@cliente.Dni</td>
-                            <td class="fw-semibold text-dark">@cliente.Nombre</td>
-                            <td class="fw-semibold text-dark">@cliente.Apellido</td>
-                            <td class="fw-semibold text-dark">@cliente.Telefono</td>
-                            <td class="fw-semibold text-dark">@cliente.Email</td>
-                            <td class="text-end pe-3">
-                                <a asp-action="Editar" asp-route-id="@cliente.Id" class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1">✏️ Editar</a>  
-                                <a asp-action="Eliminar" asp-route-id="@cliente.Id" class="btn btn-sm btn-outline-danger rounded-pill px-3">❌ Eliminar</a>
-                            </td>
-                        </tr>
-                    }
-                    @if (Model.Count == 0)
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">No hay clientes cargados</td>
-                        </tr>
-                    }
+                    <tr v-for="cliente in clientes" :key="cliente.id">
+                        <td class="ps-3">
+                            <span class="badge bg-dark font-monospace">{{ cliente.id }}</span>
+                        </td>
+                        <td class="fw-semibold text-dark">{{ cliente.dni }}</td>
+                        <td class="fw-semibold text-dark">{{ cliente.nombre }}</td>
+                        <td class="fw-semibold text-dark">{{ cliente.apellido }}</td>
+                        <td class="fw-semibold text-dark">{{ cliente.telefono }}</td>
+                        <td class="fw-semibold text-dark">{{ cliente.email }}</td>
+                        <td class="text-end pe-3">
+                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1" @@click="mostrarEditar(cliente)">✏️ Editar</button>  
+                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" @@click="mostrarEliminacion(cliente.id)">❌ Eliminar</button>
+                        </td>
+                    </tr>
+                    <tr v-if="clientes.length == 0">
+                        <td colspan="7" class="text-center text-muted py-4">No hay clientes cargados</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
-            @if (Pagina > 1)
-            {
-                <li class="page-item">
-                    <a class="page-link bg-dark text-light border-secondary" href="~/Cliente/Listar?pagina=@(Pagina - 1)" aria-label="Anterior">
-                        Anterior
-                    </a>
-                </li>
-            }
-            else
-            {
-                <li class="page-item disabled">
-                    <span class="page-link bg-dark text-secondary border-secondary">Anterior</span>
-                </li>
-            }
+    <div class="modal fade" id="modalEliminar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content text-dark">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">CONFIRMAR ACCION</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Queres borrar este cliente?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" @@click="eliminarCliente">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <li class="page-item active">
-                <span class="page-link bg-primary border-primary">@Pagina</span>
-            </li>
+    <div class="modal fade" id="modalRegistrar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content text-dark">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">REGISTRAR CLIENTE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
 
-            @if (HaySiguiente)
-            {
+                    <div v-if="mensajeError" class="alert alert-danger" role="alert">
+                        {{ mensajeError }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">DNI:</label>
+                        <input type="text" class="form-control" v-model="nuevoCliente.dni">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre:</label>
+                        <input type="text" class="form-control" v-model="nuevoCliente.nombre">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Apellido:</label>
+                        <input type="text" class="form-control" v-model="nuevoCliente.apellido">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Telefono:</label>
+                        <input type="text" class="form-control" v-model="nuevoCliente.telefono">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email:</label>
+                        <input type="email" class="form-control" v-model="nuevoCliente.email">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" @@click="registrarCliente">Registrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content text-dark">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">EDITAR CLIENTE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div v-if="mensajeErrorEditar" class="alert alert-danger" role="alert">
+                        {{ mensajeErrorEditar }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">DNI:</label>
+                        <input type="text" class="form-control" v-model="clienteEditado.dni">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre:</label>
+                        <input type="text" class="form-control" v-model="clienteEditado.nombre">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Apellido:</label>
+                        <input type="text" class="form-control" v-model="clienteEditado.apellido">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Telefono:</label>
+                        <input type="text" class="form-control" v-model="clienteEditado.telefono">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email:</label>
+                        <input type="email" class="form-control" v-model="clienteEditado.email">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" @@click="actualizarCliente">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="d-flex justify-content-center mt-3">
+        <nav>
+            <ul class="pagination">
                 <li class="page-item">
-                    <a class="page-link bg-secondary border-secondary text-white fw-bold" href="~/Cliente/Listar?pagina=@(Pagina + 1)" aria-label="Siguiente">
-                        Siguiente
-                    </a>
+                    <button class="page-link" @@click="cambiarPagina(paginaActual - 1)" :disabled="paginaActual == 1">Pag Anterior</button>
                 </li>
-            }
-            else
-            {
-                <li class="page-item disabled">
-                    <span class="page-link bg-dark text-secondary border-secondary">Siguiente</span>
+
+                <li class="page-item active">
+                    <span class="page-link">{{ paginaActual }}</span>
                 </li>
-            }
-        </ul>
-    </nav>
+
+                <li class="page-item">
+                    <button class="page-link" @@click="cambiarPagina(paginaActual + 1)" :disabled="!haySiguiente">Pag Siguiente</button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+
+
 
 
 </div>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                clientes: [],
+                paginaActual: 1,
+                haySiguiente: false,
+                mensajeExito: '',
+                mensajeError: '',
+                idClienteEliminar: null,
+                nuevoCliente: {
+                    dni: '',
+                    nombre: '',
+                    apellido: '',
+                    telefono: '',
+                    email: ''
+                },
+                clienteEditado: { 
+                    id: null, 
+                    dni: '', 
+                    nombre: '', 
+                    apellido: '', 
+                    telefono: '', 
+                    email: '' 
+                },
+                mensajeErrorEditar: ''
+            }
+        },
+        methods: {
+            
+            async cargarClientes(pagina = 1){
+                try{
+                    const response = await fetch(`/Cliente/TraerClientes?pagina=${pagina}`);
+                    const data = await response.json();
+                    this.clientes = data.clientes;
+                    this.paginaActual = data.paginaActual;
+                    this.haySiguiente = data.haySiguiente;
+                } catch(error){
+                    console.error("ERROR CARGANDO CLIENTES", error);
+                }
+            },
+
+            cambiarPagina(nuevaPagina){
+                if(nuevaPagina < 1) return;
+                this.cargarClientes(nuevaPagina);
+            },
+
+            mostrarEliminacion(id){
+                this.idClienteEliminar = id;
+                const myModal = new bootstrap.Modal('#modalEliminar');
+                myModal.show();
+            },
+
+            async eliminarCliente(){
+                try{
+                    const response = await fetch(`/Cliente/Eliminar/${this.idClienteEliminar}`,{
+                        method: 'POST'
+                    })
+                    const data = await response.json();
+
+                    if(data.success){
+                        const modalElement = document.getElementById('modalEliminar');
+                        const modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                        this.cargarClientes(this.paginaActual);
+                        this.mensajeExito = "CLIENTE ELIMINADO CORRECTAMENTE";
+                    } else{
+                        alert("ERROR ELIMINANDO CLIENTE: " + data.message);
+                    }
+
+
+                }catch(error){
+                    console.error("ERROR ELIMINANDO CLIENTE", error);
+                }
+            },
+
+            mostrarRegistrar(){
+                this.nuevoCliente = { dni: '', nombre: '', apellido: '', telefono: '', email: '' };
+                const myModal = new bootstrap.Modal('#modalRegistrar');
+                myModal.show();
+            },
+
+            async registrarCliente(){
+                this.mensajeError = '';
+                try{
+                    const response = await fetch('/Cliente/Registrar', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.nuevoCliente)
+                    });
+                    
+                    const data = await response.json();
+
+                    if(data.success){
+                        const modalElement = document.getElementById('modalRegistrar');
+                        const modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                        this.cargarClientes(this.paginaActual);
+                        this.mensajeExito = "CLIENTE REGISTRADO CORRECTAMENTE";
+                    } else {
+                        this.mensajeError = data.message;
+                    }
+                } catch(error){
+                    console.error("ERROR REGISTRANDO CLIENTE", error);
+                }
+            }, 
+
+            mostrarEditar(cliente){
+                this.mensajeErrorEditar = '';
+                this.clienteEditado.id = cliente.id;
+                this.clienteEditado.dni = cliente.dni;
+                this.clienteEditado.nombre = cliente.nombre;
+                this.clienteEditado.apellido = cliente.apellido;
+                this.clienteEditado.telefono = cliente.telefono;
+                this.clienteEditado.email = cliente.email;
+                const myModal = new bootstrap.Modal('#modalEditar');
+                myModal.show();
+            },
+
+            async actualizarCliente(){
+                this.mensajeErrorEditar = '';
+                try{
+                    const response = await fetch(`/Cliente/Editar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.clienteEditado)
+                    });
+
+                    const data = await response.json();
+                    if(data.success){
+                        const modalElement = document.getElementById('modalEditar');
+                        const modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                        this.cargarClientes(this.paginaActual);
+                        this.mensajeExito = "CLIENTE EDITADO CORRECTAMENTE";
+                    } else{
+                        this.mensajeErrorEditar = data.message;
+                    }
+                    
+
+
+
+                } catch(error){
+                    console.error("ERROR EDITANDO EL CLIENTE", error);
+                    this.mensajeErrorEditar = "ERROR DEL SERVER EDITANDO EL CLIENTE";
+                }
+            }
+
+
+        },
+        mounted(){
+            this.cargarClientes();
+        }
+    }).mount('#app');
+</script>
+
+
+
+

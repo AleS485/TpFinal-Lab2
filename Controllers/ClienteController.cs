@@ -8,100 +8,123 @@ namespace TpFinal_Lab2.Controllers;
 public class ClienteController(ClienteRepository clienteRepo) : Controller
 {
 
-    [HttpGet]
-    public IActionResult Registrar()
+    [HttpPost]
+    public IActionResult Registrar([FromBody] Cliente cliente)
     {
         
-        return View();
-
-    }
-
-    [HttpPost]
-    public IActionResult Registrar(Cliente cliente)
-    {
         if (!ModelState.IsValid)
         {
-            return View(cliente);
+            string mensajeError = "El formulario tiene datos no validos";
+
+            foreach (var modelState in ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    if (!string.IsNullOrEmpty(error.ErrorMessage))
+                    {
+                        mensajeError = error.ErrorMessage;
+                        break;
+                    }
+                }
+                if (mensajeError != "El formulario tiene datos no validos") break;
+            }
+
+            return Json(new { success = false, message = mensajeError });
         }
+
         try
         {
             clienteRepo.Create(cliente);
-            return RedirectToAction(nameof(Listar));
+            return Json(new { success = true });
         }
         catch (Exception e)
         {
             Console.Error.WriteLine(e.Message);
-            return RedirectToAction(nameof(Listar));
+            return Json(new { success = false, message = "Error registrando el cliente"});
         }
+
+
+
     }
     
     [HttpGet]
     public IActionResult Listar(int pagina = 1)
     {
+        return View();
+    }
+
+
+    [HttpGet]
+    public IActionResult TraerClientes(int pagina = 1)
+    {
         int tamano = 5;
         var lista = clienteRepo.ListAll(pagina, tamano);
 
-        ViewBag.Pagina = pagina;
-        ViewBag.HaySiguiente = lista.Count == tamano;
+        bool haySiguiente = lista.Count == tamano;
 
-        return View(lista);
-    }
-
-    [HttpGet]
-    public IActionResult Editar(int id)
-    {
-        var cliente = clienteRepo.FindById(id);
-        if(cliente == null)
+        return Json(new
         {
-            return RedirectToAction(nameof(Listar));
-        }
-        return View(cliente);
+            clientes = lista,
+            paginaActual = pagina,
+            haySiguiente = haySiguiente
+        });
     }
 
     [HttpPost]
-    public IActionResult Editar(Cliente cliente)
+    public IActionResult Editar([FromBody] Cliente cliente)
     {
         if (!ModelState.IsValid)
         {
-            return View(cliente);
+            string mensajeError = "El formulario tiene datos no validos";
+
+            foreach (var modelState in ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    if (!string.IsNullOrEmpty(error.ErrorMessage))
+                    {
+                        mensajeError = error.ErrorMessage;
+                        break;
+                    }
+                }
+                if (mensajeError != "El formulario tiene datos no validos") break;
+            }
+            return Json(new { success = false, message = mensajeError });
         }
+
         try
         {
-            clienteRepo.Update(cliente);
-            return RedirectToAction(nameof(Listar));
+            clienteRepo.Update(cliente); 
+            return Json(new { success = true });
         }
         catch (Exception e)
         {
             Console.Error.WriteLine(e.Message);
-            return RedirectToAction(nameof(Listar));
+            return Json(new { success = false, message = "Error editando el cliente" });
         }
     }
 
-    [HttpGet]
-    public IActionResult Eliminar(int id)
-    {
-        
-        var cliente = clienteRepo.FindById(id);
-        if (cliente == null)
-        {
-            return RedirectToAction(nameof(Listar));
-        }
-        return View(cliente);
 
-    }
+
 
     [HttpPost]
-    public IActionResult Eliminar(Cliente cliente)
+    public IActionResult Eliminar(int id)
     {
         try
         {
-            clienteRepo.Delete(cliente.Id);
-            return RedirectToAction(nameof(Listar));
+            var cliente = clienteRepo.FindById(id);
+            if(cliente == null)
+            {
+                return Json(new { success = false, message = "NO EXISTE EL CLIENTE" });
+            }
+            
+            clienteRepo.Delete(id);
+            return Json(new { success = true });
         }
         catch (Exception e)
         {
             Console.Error.WriteLine(e.Message);
-            return RedirectToAction(nameof(Listar));
+            return Json(new {success = false, message = e.Message});
         }
     }
 
