@@ -121,7 +121,17 @@ public class DesarrolladoraController(DesarrolladoraRepository desarrolladoraRep
         }
     }
 
+    [HttpGet]
+    public IActionResult BuscarFiltradas(string filtro)
+    {
+        if (string.IsNullOrWhiteSpace(filtro))
+        {
+            return Json(new List<Desarrolladora>());
+        }
 
+        var lista = desarrolladoraRepo.BuscarFiltradas(filtro);
+        return Json(lista);
+    }
 
     
 }

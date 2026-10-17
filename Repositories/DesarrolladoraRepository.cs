@@ -97,5 +97,33 @@ public class DesarrolladoraRepository(IConfiguration configuration) : Repositori
         return command.ExecuteNonQuery();
     }
 
+    public List<Desarrolladora> BuscarFiltradas(string filtro)
+    {
+        List<Desarrolladora> lista = [];
+        var query = @"SELECT id, nombre, web 
+                    FROM desarrolladora 
+                    WHERE nombre LIKE @nombreBuscado 
+                    ORDER BY nombre";
+
+        using MySqlConnection connection = new(connectionString);
+        using MySqlCommand command = new(query, connection);
+        
+        command.Parameters.Add("@nombreBuscado", MySqlDbType.VarChar).Value = "%" + filtro + "%";
+        
+        connection.Open();
+        using MySqlDataReader reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(new Desarrolladora
+            {
+                Id = reader.GetInt32("id"),
+                Nombre = reader.GetString("nombre"),
+                Web = reader["web"] as string
+            });
+        }
+        return lista;
+    }
+
+
 
 }

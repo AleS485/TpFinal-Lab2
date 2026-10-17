@@ -1,0 +1,164 @@
+@model TpFinal_Lab2.DTO.JuegoDTO
+@{
+    ViewData["Title"] = "Editar Juego";
+}
+
+<div class="row justify-content-center mt-5" id="app">
+    <div class="col-md-6">
+        <div class="card bg-white border shadow-lg">    
+            <div class="card-body p-4 text-dark">
+                <h3 class="text-center mb-4 fw-bold text-dark">🎮 Editar Juego</h3>
+
+                <form asp-action="Editar" method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Titulo" class="form-label text-dark fw-bold">Titulo:</label>
+                        <input asp-for="Titulo" class="form-control bg-light text-dark border" required>
+                        <span asp-validation-for="Titulo" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Genero" class="form-label text-dark fw-bold">Genero:</label>
+                        <input asp-for="Genero" class="form-control bg-light text-dark border" required>
+                        <span asp-validation-for="Genero" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Descripcion" class="form-label text-dark fw-bold">Descripcion:</label>
+                        <textarea asp-for="Descripcion" class="form-control bg-light text-dark border" rows="2"></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Precio" class="form-label text-dark fw-bold">Precio:</label>
+                            <input asp-for="Precio" type="number" step="0.01" class="form-control bg-light text-dark border" required>
+                            <span asp-validation-for="Precio" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Stock" class="form-label text-dark fw-bold">Stock:</label>
+                            <input asp-for="Stock" type="number" class="form-control bg-light text-dark border" required>
+                            <span asp-validation-for="Stock" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-bold">Desarrolladora:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light text-dark border" v-model="desarrolladoraNombre" placeholder="Usa el boton buscar para elegir una" readonly required>
+                            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalBuscarDesarrolladora">
+                                🔍 Buscar
+                            </button>
+                        </div>
+                        <input type="hidden" name="DesarrolladoraId" v-model="desarrolladoraId">
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="Estado" class="form-check-input border" type="checkbox">
+                        <label asp-for="Estado" class="form-check-label text-dark fw-bold">Disponible?</label>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a asp-action="Listar" class="btn btn-outline-dark btn-sm px-3">Volver</a>
+                        <button type="submit" class="btn btn-dark fw-semibold px-4">Guardar 📝</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalBuscarDesarrolladora" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-white text-dark border">
+                <div class="modal-header border">
+                    <h5 class="modal-title text-dark">Buscar Desarrolladora</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="text" class="form-control bg-light text-dark border" v-model="buscada" @@input="buscarDesarrolladoras" placeholder="Escribi para filtrar...">
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Web</th>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="d in listaDesarrolladoras" :key="d.id">
+                                    <td>{{ d.nombre }}</td>
+                                    <td>{{ d.web ? d.web : 'Sin web' }}</td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-dark px-3" @@click="seleccionarDesarrolladora(d)">
+                                            Elegir
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+</div>
+
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                buscada: '',
+                listaDesarrolladoras: [], 
+                desarrolladoraNombre: '@ViewBag.DesarrolladoraNombre', 
+                desarrolladoraId: '@Model.DesarrolladoraId'
+            }
+        },
+        methods: {
+        
+            async buscarDesarrolladoras(){
+                if(this.buscada.length < 2){
+                    this.listaDesarrolladoras = [];
+                    return;
+                }
+
+                try{
+                    const response = await fetch(`/Desarrolladora/BuscarFiltradas?filtro=${this.buscada}`);
+                    this.listaDesarrolladoras = await response.json();
+                } catch(error){
+                    console.error("ERROR BUSCANDO DESARROLADORA", error);
+                }
+
+            },
+
+            seleccionarDesarrolladora(desarrolladora){
+                this.desarrolladoraId = desarrolladora.id;
+                this.desarrolladoraNombre = desarrolladora.nombre;
+                this.listaDesarrolladoras = [];
+                this.buscada = '';
+
+                const modalElement = document.getElementById('modalBuscarDesarrolladora');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+            }
+
+
+        }
+    }).mount('#app');
+</script>
+
+
+

@@ -9,7 +9,6 @@ builder.Services.AddScoped<ClienteRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<ImagenJuegoRepository>();
 builder.Services.AddScoped<DesarrolladoraRepository>();
-builder.Services.AddScoped<ResenaRepository>();
 builder.Services.AddScoped<VentaRepository>();
 builder.Services.AddScoped<DesarrolladoraRepository>();
 

@@ -4,6 +4,8 @@ namespace TpFinal_Lab2.DTO;
 
 public class JuegoDTO
 {
+    public int Id { get; set; }
+
     [Required(ErrorMessage = "El titulo es obligatorio")]
     [StringLength(150, ErrorMessage = "El titulo no puede superar los 150 caracteres")]
     public required string? Titulo { get; set; }
