@@ -28,10 +28,10 @@ public class VentaRepository(IConfiguration config) : RepositorioBase(config)
         return res;
     }
 
-    public List<Venta> ListAll()
+    public List<Venta> ListAll(int page = 1, int limit = 10)
     {
         List<Venta> ventas = [];
-        var query = @"
+        var query = $@"
             SELECT 
             v.id AS venta_id, v.fecha_hora, v.cantidad, v.precio_total,
             j.id AS juego_id, j.titulo AS juego_titulo, j.precio AS juego_precio,
@@ -41,7 +41,8 @@ public class VentaRepository(IConfiguration config) : RepositorioBase(config)
             INNER JOIN juego j ON v.juego_id = j.id
             INNER JOIN cliente c ON v.cliente_id = c.id
             INNER JOIN usuario u ON v.usuario_id = u.id
-            ORDER BY v.fecha_hora DESC";
+            ORDER BY v.fecha_hora DESC
+            LIMIT {(page - 1) * limit}, {limit}";
 
         using MySqlConnection connection = new(connectionString);
         using MySqlCommand command = new(query, connection);

@@ -134,6 +134,36 @@ public class ClienteRepository(IConfiguration configuration) : RepositorioBase(c
         return command.ExecuteNonQuery();
     }
 
+    public List<Cliente> BuscarFiltrados(string filtro)
+    {
+        List<Cliente> lista = [];
+        var query = @"SELECT id, nombre, apellido, dni, email, telefono 
+                    FROM cliente 
+                    WHERE nombre LIKE @filtro 
+                    ORDER BY apellido, nombre";
+
+        using MySqlConnection connection = new(connectionString);
+        using MySqlCommand command = new(query, connection);
+        
+        command.Parameters.Add("@filtro", MySqlDbType.VarChar).Value = "%" + filtro + "%";
+        
+        connection.Open();
+        using MySqlDataReader reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(new Cliente
+            {
+                Id = reader.GetInt32("id"),
+                Nombre = reader.GetString("nombre"),
+                Apellido = reader.GetString("apellido"),
+                Dni = reader.GetString("dni"),
+                Email = reader["email"] as string,
+                Telefono = reader["telefono"] as string
+            });
+        }
+        return lista;
+    }
+
     public int Delete(int id)
     {
         var query = @"DELETE FROM cliente WHERE id = @id";

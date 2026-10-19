@@ -177,5 +177,24 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         return RedirectToAction(nameof(Listar));
     }
 
+    [HttpGet]
+    public JsonResult BuscarFiltrados(string filtro)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(filtro))
+            {
+                return Json(new List<Juego>());
+            }
+
+            var juegos = juegoRepo.BuscarFiltrados(filtro);
+            return Json(juegos);
+        }
+        catch (Exception)
+        {
+            return Json(new List<Juego>()); 
+        }
+    }
+
 
 }

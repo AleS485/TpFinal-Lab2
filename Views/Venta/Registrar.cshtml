@@ -1,0 +1,219 @@
+@model TpFinal_Lab2.DTO.VentaDTO
+@{
+    ViewData["Title"] = "Registrar Venta";
+}
+
+<div class="row justify-content-center mt-5" id="app">
+    <div class="col-md-6"> 
+
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Mensaje"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="card bg-white border shadow-lg">    
+            <div class="card-body p-4 text-dark">
+                <h3 class="text-center mb-4 fw-bold text-dark">🛒 Registrar Venta</h3>
+
+                <form asp-action="Registrar" method="post">
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-bold">Juego:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light text-dark border" v-model="juegoTitulo" placeholder="Usa el boton buscar para elegir un juego" readonly required>
+                            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalBuscarJuego">
+                                🔍 Buscar
+                            </button>
+                        </div>
+                        <input type="hidden" asp-for="JuegoId" v-model="juegoId">
+                        <span asp-validation-for="JuegoId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-bold">Cliente:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light text-dark border" v-model="clienteNombre" placeholder="Usa el boton buscar para elegir un cliente" readonly required>
+                            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalBuscarCliente">
+                                🔍 Buscar
+                            </button>
+                        </div>
+                        <input type="hidden" asp-for="ClienteId" v-model="clienteId">
+                        <span asp-validation-for="ClienteId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Cantidad" class="form-label text-dark fw-bold">Cantidad:</label>
+                        <input asp-for="Cantidad" type="number" min="1" class="form-control bg-light text-dark border" v-model="cantidad" required>
+                        <span asp-validation-for="Cantidad" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a asp-action="Listar" class="btn btn-outline-dark btn-sm px-3">Volver</a>
+                        <button type="submit" class="btn btn-dark fw-semibold px-4">Guardar Venta 📝</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalBuscarJuego" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-white text-dark border">
+                <div class="modal-header border">
+                    <h5 class="modal-title text-dark">Buscar Juego</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="text" class="form-control bg-light text-dark border" v-model="buscadoJuego" @@input="buscarJuegos" placeholder="Escribi para filtrar juego...">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Titulo</th>
+                                    <th>Genero</th>
+                                    <th>Precio</th>
+                                    <th>Stock</th>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="j in listaJuegos" :key="j.id">
+                                    <td>{{ j.titulo }}</td>
+                                    <td>{{ j.genero }}</td>
+                                    <td class="text-success fw-bold">${{ j.precio }}</td>
+                                    <td><span class="badge bg-secondary">{{ j.stock }}</span></td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-dark px-3" @@click="seleccionarJuego(j)">
+                                            Elegir
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalBuscarCliente" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-white text-dark border">
+                <div class="modal-header border">
+                    <h5 class="modal-title text-dark">Buscar Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="text" class="form-control bg-light text-dark border" v-model="buscadoCliente" @@input="buscarClientes" placeholder="Escribi para filtrar...">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nombre y Apellido</th>
+                                    <th>DNI</th>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="c in listaClientes" :key="c.id">
+                                    <td>{{ c.nombre }} {{ c.apellido }}</td>
+                                    <td>{{ c.dni }}</td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-dark px-3" @@click="seleccionarCliente(c)">
+                                            Elegir
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                buscadoJuego: '',
+                listaJuegos: [],
+                juegoTitulo: '',
+                juegoId: '',
+
+                buscadoCliente: '',
+                listaClientes: [],
+                clienteNombre: '',
+                clienteId: '',
+
+                cantidad: 1
+            }
+        },
+        methods: {
+            async buscarJuegos(){
+                if(this.buscadoJuego.length < 2){
+                    this.listaJuegos = [];
+                    return;
+                }
+                try{
+                    const response = await fetch(`/Juego/BuscarFiltrados?filtro=${this.buscadoJuego}`); 
+                    this.listaJuegos = await response.json();
+                } catch(error){
+                    console.error("ERROR BUSCANDO JUEGO", error);
+                }
+            },
+
+            seleccionarJuego(juego){
+                this.juegoId = juego.id;
+                this.juegoTitulo = juego.titulo;
+                this.listaJuegos = [];
+                this.buscadoJuego = '';
+
+                const modalElement = document.getElementById('modalBuscarJuego');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+            },
+
+            async buscarClientes(){
+                if(this.buscadoCliente.length < 2){
+                    this.listaClientes = [];
+                    return;
+                }
+                try{
+                    const response = await fetch(`/Cliente/BuscarFiltrados?filtro=${this.buscadoCliente}`); 
+                    this.listaClientes = await response.json();
+                } catch(error){
+                    console.error("ERROR BUSCANDO CLIENTE", error);
+                }
+            },
+
+            seleccionarCliente(cliente){
+                this.clienteId = cliente.id;
+                this.clienteNombre = cliente.nombre + ' ' + cliente.apellido;
+                this.listaClientes = [];
+                this.buscadoCliente = '';
+
+                const modalElement = document.getElementById('modalBuscarCliente');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
+            }
+        }
+    }).mount('#app');
+</script>

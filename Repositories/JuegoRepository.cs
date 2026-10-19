@@ -138,4 +138,50 @@ public class JuegoRepository(IConfiguration configuration) : RepositorioBase(con
         connection.Open();
         return command.ExecuteNonQuery();
     }
+
+    public List<Juego> BuscarFiltrados(string filtro)
+    {
+        List<Juego> lista = [];
+        var query = @"SELECT id, titulo, genero, descripcion, precio, stock, estado, desarrolladora_id 
+                    FROM juego 
+                    WHERE titulo LIKE @filtro AND estado = 1
+                    ORDER BY titulo";
+
+        using MySqlConnection connection = new(connectionString);
+        using MySqlCommand command = new(query, connection);
+        
+        command.Parameters.Add("@filtro", MySqlDbType.VarChar).Value = "%" + filtro + "%";
+        
+        connection.Open();
+        using MySqlDataReader reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            lista.Add(new Juego
+            {
+                Id = reader.GetInt32("id"),
+                Titulo = reader.GetString("titulo"),
+                Genero = reader.GetString("genero"),
+                Descripcion = reader["descripcion"] as string,
+                Precio = reader.GetDecimal("precio"),
+                Stock = reader.GetInt32("stock"),
+                Estado = reader.GetBoolean("estado")
+            });
+        }
+        return lista;
+    }
+
+    public void ActualizarStock(int juegoId, int nuevoStock)
+    {
+        var query = "UPDATE juego SET stock = @stock WHERE id = @id";
+
+        using MySqlConnection connection = new(connectionString);
+        using MySqlCommand command = new(query, connection);
+        
+        command.Parameters.AddWithValue("@stock", nuevoStock);
+command.Parameters.AddWithValue("@id", juegoId);
+        
+        connection.Open();
+        command.ExecuteNonQuery();
+    }
+
 }

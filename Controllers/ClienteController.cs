@@ -128,6 +128,25 @@ public class ClienteController(ClienteRepository clienteRepo) : Controller
         }
     }
 
+    [HttpGet]
+    public JsonResult BuscarFiltrados(string filtro)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(filtro))
+            {
+                return Json(new List<Cliente>());
+            }
+
+            var clientes = clienteRepo.BuscarFiltrados(filtro);
+            return Json(clientes);
+        }
+        catch (Exception)
+        {
+            return Json(new List<Cliente>());
+        }
+    }
+
 
 
 }
