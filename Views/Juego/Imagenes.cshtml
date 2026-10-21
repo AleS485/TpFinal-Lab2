@@ -1,0 +1,209 @@
+@model TpFinal_Lab2.Models.Juego
+
+<div id="appFotos" class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                    <div>
+                        <span class="text-uppercase text-muted small fw-bold">Gestion de Imagenes</span>
+                        <h1 class="h3 text-dark fw-bold mb-0">@Model.Titulo</h1>
+                    </div>
+                    <a asp-action="Listar" class="btn btn-outline-secondary px-4 rounded-pill">Volver</a>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-5">
+                        <div class="p-4 rounded-4 bg-light border h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <h4 class="h5 text-dark fw-bold mb-3">Foto de Portada</h4>
+                                <div class="mb-3 text-center">
+                                    <div v-if="urlPortada" class="position-relative overflow-hidden rounded-3 shadow-sm border bg-white ratio ratio-4x3">
+                                        <img v-bind:src="urlPortada" class="w-100 h-100 object-fit-cover" alt="portada">
+                                    </div>
+                                    <div v-else class="d-flex align-items-center justify-content-center rounded-3 border bg-white text-muted ratio ratio-4x3">
+                                        <span>Sin portada asignada</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form v-on:submit.prevent="subirPortada" class="mt-3">
+                                <input type="file" ref="filePortada" class="form-control mb-3" accept="image/*" />
+                                <button type="submit" class="btn btn-dark w-100 rounded-pill" v-bind:disabled="cargandoPortada">
+                                    Guardar Portada
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <div class="p-4 rounded-4 bg-light border h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <h4 class="h5 text-dark fw-bold mb-3">Galeria del Juego</h4>
+                                <form v-on:submit.prevent="subirGaleria" class="mb-4">
+                                    <div class="input-group mb-3">
+                                        <input type="file" ref="fileGaleria" v-on:change="previsualizar" class="form-control" accept="image/*" multiple />
+                                        <button type="submit" class="btn btn-success" v-bind:disabled="cargandoGaleria">Subir</button>
+                                    </div>
+
+                                    <div class="d-flex flex-wrap gap-2" v-if="vistasPrevias.length > 0">
+                                        <div v-for="img in vistasPrevias" class="position-relative rounded overflow-hidden border bg-white shadow-sm ratio ratio-16x9 w-25">
+                                            <img v-bind:src="img" class="w-100 h-100 object-fit-cover">
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <h6 class="text-secondary fw-bold mb-3">Imagenes Actuales:</h6>
+                                <div class="row g-2 overflow-y-auto pe-1">
+                                    <div v-for="foto in galeria" v-bind:key="foto.id" class="col-4">
+                                        <div class="card border shadow-sm rounded-3 overflow-hidden bg-white h-100">
+                                            <div class="bg-light text-center ratio ratio-4x3">
+                                                <img v-bind:src="foto.url" class="w-100 h-100 object-fit-cover">
+                                            </div>
+                                            <div class="p-2 text-center bg-white">
+                                                <button type="button" v-on:click="eliminarFoto(foto.id)" class="btn btn-outline-danger btn-sm w-100 py-0 small">Borrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    juegoId: "@Model.Id",
+                    urlPortada: "@Model.Portada",
+                    galeria: [],
+                    vistasPrevias: [],
+                    cargandoPortada: false,
+                    cargandoGaleria: false
+                };
+            },
+            methods: {
+                async subirPortada() {
+                    const input = this.$refs.filePortada;
+                    if (!input.files || input.files.length == 0) {
+                        alert("selecciona una foto para la portada");
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append("portadaFile", input.files[0]);
+
+                    this.cargandoPortada = true;
+
+                    try {
+                        const res = await fetch(`/ImagenJuego/CambiarPortada?id=${this.juegoId}`, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!res.ok) throw new Error();
+
+                        const data = await res.json();
+                        this.urlPortada = data.url;
+                        input.value = "";
+                        alert("se subio la portada correctamente");
+
+                    } catch (error) {
+                        console.error(error);
+                        alert("error subiendo la portada");
+                    } finally {
+                        this.cargandoPortada = false;
+                    }
+                },
+
+                previsualizar(event) {
+                    this.vistasPrevias = [];
+                    const files = event.target.files;
+                    if (!files) return;
+
+                    [...files].forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.vistasPrevias.push(e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                },
+
+                async subirGaleria() {
+                    const input = this.$refs.fileGaleria;
+                    if (!input.files || input.files.length == 0) {
+                        alert("selecciona al menos una imagen");
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    for (let i = 0; i < input.files.length; i++) {
+                        formData.append("imagenes", input.files[i]);
+                    }
+
+                    this.cargandoGaleria = true;
+
+                    try {
+                        const res = await fetch(`/ImagenJuego/Alta?id=${this.juegoId}`, {
+                            method: "POST",
+                            body: formData,
+                        });
+
+                        if (!res.ok) throw new Error();
+
+                        this.galeria = await res.json();
+                        this.vistasPrevias = [];
+                        input.value = "";
+                    } catch (error) {
+                        console.error(error);
+                        alert("error subiendo las imagenes");
+                    } finally {
+                        this.cargandoGaleria = false;
+                    }
+                },
+
+                async eliminarFoto(imagenId) {
+                    try {
+                        const res = await fetch(`/ImagenJuego/Eliminar?id=${imagenId}`, {
+                            method: "POST"
+                        });
+
+                        if (!res.ok) throw new Error();
+
+                        this.galeria = this.galeria.filter(foto => foto.id !== imagenId);
+                        alert("imagen eliminada con exito");
+                    } catch (error) {
+                        console.error(error);
+                        alert("error eliminando la imagen");
+                    }
+                },
+
+                async cargarFotos(){
+                    try{
+                        const res = await fetch(`/ImagenJuego/TraerFotos?id=${this.juegoId}`);
+                        if(res.ok){
+                            let data = await res.json();
+                            this.galeria = data.imagenes || [];
+                            this.urlPortada = data.portada ? data.portada.url : null;
+                        } 
+                    } catch(error){
+                        console.error(error);
+                        alert("error cargando las fotos");
+                    }
+                }
+            },
+            mounted(){
+                this.cargarFotos();
+            }
+        }).mount('#appFotos');
+    </script>
+}

@@ -196,5 +196,18 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         }
     }
 
+    public IActionResult Imagenes(int id)
+    {
+        var juego = juegoRepo.FindById(id);
+
+        if(juego == null)
+        {
+            return NotFound();
+        }
+
+        return View(juego);
+    }
+
+
 
 }
