@@ -2,12 +2,14 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TpFinal_Lab2.Models;
 using TpFinal_Lab2.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TpFinal_Lab2.Controllers;
 
 public class ClienteController(ClienteRepository clienteRepo) : Controller
 {
 
+    [Authorize]
     [HttpPost]
     public IActionResult Registrar([FromBody] Cliente cliente)
     {
@@ -47,6 +49,7 @@ public class ClienteController(ClienteRepository clienteRepo) : Controller
 
     }
     
+    [Authorize]
     [HttpGet]
     public IActionResult Listar(int pagina = 1)
     {
@@ -54,6 +57,7 @@ public class ClienteController(ClienteRepository clienteRepo) : Controller
     }
 
 
+    [Authorize]
     [HttpGet]
     public IActionResult TraerClientes(int pagina = 1)
     {
@@ -70,6 +74,7 @@ public class ClienteController(ClienteRepository clienteRepo) : Controller
         });
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult Editar([FromBody] Cliente cliente)
     {
@@ -128,6 +133,7 @@ public class ClienteController(ClienteRepository clienteRepo) : Controller
         }
     }
 
+    [Authorize]
     [HttpGet]
     public JsonResult BuscarFiltrados(string filtro)
     {

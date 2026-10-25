@@ -1,0 +1,23 @@
+@model TpFinal_Lab2.Models.Usuario
+@{
+    ViewData["Title"] = "Eliminar Empleado";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">
+                <h3 class="h4 text-dark fw-bold mb-3">Eliminar Empleado</h3>
+                <p class="text-muted mb-4">Seguro de borrar a este empleado?</p>
+
+                <form asp-action="Eliminar" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">🗑️ Borrar</button>
+                        <a asp-action="Listar" class="btn btn-outline-dark rounded-pill px-4">❌ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

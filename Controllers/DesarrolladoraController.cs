@@ -2,12 +2,14 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TpFinal_Lab2.Models;
 using TpFinal_Lab2.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TpFinal_Lab2.Controllers;
 
 public class DesarrolladoraController(DesarrolladoraRepository desarrolladoraRepo) : Controller
 {
 
+    [Authorize]
     [HttpPost]
     public IActionResult Registrar([FromBody] Desarrolladora desarrolladora)
     {
@@ -43,13 +45,14 @@ public class DesarrolladoraController(DesarrolladoraRepository desarrolladoraRep
         }
     }
 
-
+    [Authorize]
     [HttpGet]
     public IActionResult Listar(int pagina = 1)
     {
         return View();
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult TraerDesarrolladoras(int pagina = 1)
     {
@@ -66,6 +69,7 @@ public class DesarrolladoraController(DesarrolladoraRepository desarrolladoraRep
         });
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult Editar([FromBody] Desarrolladora desarrolladora)
     {
@@ -100,6 +104,7 @@ public class DesarrolladoraController(DesarrolladoraRepository desarrolladoraRep
         }
     }
 
+    [Authorize(Policy = "Administrador")]
     [HttpPost]
     public IActionResult Eliminar(int id)
     {
@@ -121,6 +126,7 @@ public class DesarrolladoraController(DesarrolladoraRepository desarrolladoraRep
         }
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult BuscarFiltradas(string filtro)
     {

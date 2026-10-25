@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using TpFinal_Lab2.DTO;
 using TpFinal_Lab2.Models;
 using TpFinal_Lab2.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TpFinal_Lab2.Controllers;
 
 public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository desarrolladoraRepo) : Controller
 {
 
-    
+    [Authorize]
     [HttpGet]
     public IActionResult Listar(int pagina = 1)
     {
@@ -19,12 +20,15 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         return View(lista);
     }
 
+
+    [Authorize]
     [HttpGet]
     public IActionResult Registrar()
     {
         return View();
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult Registrar(JuegoDTO dto)
     {
@@ -66,12 +70,9 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
             ModelState.AddModelError("", "ERROR GUARDANDO EL JUEGO EN LA BD");
             return View(dto);
         }
-        
-        
-
-        
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult Editar(int id)
     {
@@ -97,6 +98,7 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         return View(dto);
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult Editar(JuegoDTO dto)
     {
@@ -144,6 +146,8 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
 
     }
 
+
+    [Authorize(Policy = "Administrador")]
     [HttpGet]
     public IActionResult Eliminar(int id)
     {
@@ -155,6 +159,7 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         return View(juego); 
     }
 
+    [Authorize(Policy = "Administrador")]
     [HttpPost]
     public IActionResult Eliminar(Juego juego)
     {
@@ -177,6 +182,8 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         return RedirectToAction(nameof(Listar));
     }
 
+
+    [Authorize]
     [HttpGet]
     public JsonResult BuscarFiltrados(string filtro)
     {
@@ -196,6 +203,7 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         }
     }
 
+    [Authorize]
     public IActionResult Imagenes(int id)
     {
         var juego = juegoRepo.FindById(id);

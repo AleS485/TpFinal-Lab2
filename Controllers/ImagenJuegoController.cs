@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using TpFinal_Lab2.DTO;
 using TpFinal_Lab2.Models;
 using TpFinal_Lab2.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TpFinal_Lab2.Controllers;
 
 public class ImagenJuegoController([FromServices] IWebHostEnvironment environment, JuegoRepository juegoRepo, ImagenJuegoRepository imagenRepo) : Controller
 {
 
+    [Authorize]
     public IActionResult TraerFotos(int id)
     {
         var juego = juegoRepo.FindById(id); 
@@ -23,6 +25,7 @@ public class ImagenJuegoController([FromServices] IWebHostEnvironment environmen
         return Ok(new { juego.Imagenes, juego.Portada });
     }
 
+    [Authorize]
     public async Task<IActionResult> CambiarPortada(int id, IFormFile portadaFile)
     {
         var juego = juegoRepo.FindById(id);
@@ -50,6 +53,7 @@ public class ImagenJuegoController([FromServices] IWebHostEnvironment environmen
     }
     
 
+    [Authorize]
     public async Task<IActionResult> Alta(int id, [FromForm] List<IFormFile> imagenes)
     {
         if (imagenes == null || imagenes.Count == 0)
@@ -81,6 +85,7 @@ public class ImagenJuegoController([FromServices] IWebHostEnvironment environmen
         return Ok(juego.Imagenes);
     }
 
+    [Authorize(Policy = "Administrador")]
     public IActionResult Eliminar(int id)
     {
         if (id <= 0)

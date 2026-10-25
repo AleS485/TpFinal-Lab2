@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using TpFinal_Lab2.DTO;
 using TpFinal_Lab2.Models;
 using TpFinal_Lab2.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TpFinal_Lab2.Controllers;
 
 public class VentaController(VentaRepository ventaRepo, JuegoRepository juegoRepo, ClienteRepository clienteRepo, UsuarioRepository usuarioRepo) : Controller
 {
 
+    [Authorize]
     [HttpGet]
     public IActionResult Listar(int pagina = 1)
     {
@@ -21,12 +23,14 @@ public class VentaController(VentaRepository ventaRepo, JuegoRepository juegoRep
         return View(lista);
     }
     
+    [Authorize]
     [HttpGet]
     public IActionResult Registrar()
     {
         return View();
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult Registrar(VentaDTO dto)
     {
@@ -75,6 +79,7 @@ public class VentaController(VentaRepository ventaRepo, JuegoRepository juegoRep
         return RedirectToAction("Listar");
     }
 
+    [Authorize(Policy = "Administrador")]
     [HttpGet]
     public IActionResult Eliminar(int id)
     {
@@ -86,6 +91,7 @@ public class VentaController(VentaRepository ventaRepo, JuegoRepository juegoRep
         return View(venta); 
     }
 
+    [Authorize(Policy = "Administrador")]
     [HttpPost]
     public IActionResult Eliminar(Venta venta)
     {

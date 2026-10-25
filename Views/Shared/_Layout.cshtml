@@ -14,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GAMESTORE</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Kamurocho Store</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -22,18 +22,56 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Desarrolladora" asp-action="Listar">Desarrolladora</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Cliente" asp-action="Listar">Cliente</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Juego" asp-action="Listar">Juego</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Venta" asp-action="Listar">Venta</a>
-                        </li>
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Desarrolladora" asp-action="Listar">Desarrolladora</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Cliente" asp-action="Listar">Cliente</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Juego" asp-action="Listar">Juego</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Venta" asp-action="Listar">Venta</a>
+                            </li>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Usuario" asp-action="Listar">Usuarios</a>
+                                </li>
+                            }
+                        }
                     </ul>
+
+                    <ul class="navbar-nav d-flex flex-row align-items-center gap-3">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <span class="badge bg-primary text-white border border-primary-subtle px-3 py-2 fs-6 shadow-sm">
+                                    👤@(User.FindFirst("FullName")?.Value ?? User.Identity?.Name)
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Perfil">✏️Mi Perfil</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Logout">🚪Salir</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Login">Iniciar Sesion</a>
+                            </li>   
+                        }
+                    </ul>
+
+
+
                 </div>
             </div>
         </nav>

@@ -1,0 +1,101 @@
+@model TpFinal_Lab2.Models.Usuario
+@{
+    ViewData["Title"] = "Editar Empleado";
+}
+
+<div id="editarUsuario" class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">
+                <h3 class="text-center mb-4 text-dark fw-bold">Editar Empleado 👤</h3>
+
+                <form asp-action="Editar" method="post" enctype="multipart/form-data">
+                    
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-semibold">Nombre: </label>
+                        <input type="text" name="nombre" class="form-control rounded-3" value="@Model.Nombre" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-semibold">Apellido: </label>
+                        <input type="text" name="apellido" class="form-control rounded-3" value="@Model.Apellido" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-semibold">Email: </label>
+                        <input type="email" name="email" class="form-control rounded-3" value="@Model.Email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-semibold">Cambiar Contrasena: </label>
+                        <input type="password" name="nuevaPassword" class="form-control rounded-3" placeholder="Esto es opcional" autocomplete="new-password">
+                        <small class="text-muted">Rellena si queres cambiar la contrasena</small>
+                    </div>
+
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label text-dark fw-semibold">Rol: </label>
+                            <select asp-for="Role" class="form-select rounded-3" required>
+                                <option value="Empleado">Empleado</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="Role" />
+                    }
+
+                    <div class="mb-4">
+                        <label class="form-label text-dark fw-semibold">Avatar / Foto: </label>
+                        <input type="file" name="avatarFile" v-on:change="previsualizar" class="form-control rounded-3" accept="image/*">
+                        
+                        <div class="text-center mt-3" v-if="preview">
+                            <img v-bind:src="preview" width="120" height="120" class="rounded-circle border object-fit-cover shadow-sm">
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-dark rounded-pill py-2">Guardar Cambios 💾</button>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <a asp-action="Listar" class="btn btn-outline-dark rounded-pill py-2 text-center">Cancelar</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-dark rounded-pill py-2 text-center">Cancelar</a>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    preview: "@Model.AvatarUrl"
+                };
+            },
+            methods: {
+                previsualizar(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.preview = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }).mount('#editarUsuario');
+    </script>
+}

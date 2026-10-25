@@ -1,4 +1,6 @@
 using TpFinal_Lab2.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,23 @@ builder.Services.AddScoped<ImagenJuegoRepository>();
 builder.Services.AddScoped<DesarrolladoraRepository>();
 builder.Services.AddScoped<VentaRepository>();
 builder.Services.AddScoped<DesarrolladoraRepository>();
+
+
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Usuario/Login";
+        options.LogoutPath = "/Usuario/Logout"; 
+        options.AccessDeniedPath = "/Home/Restringido"; 
+    });
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("Administrador", policy => policy.RequireRole("Administrador"));
+});
+
+
 
 
 var app = builder.Build();
@@ -26,6 +45,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapStaticAssets();
