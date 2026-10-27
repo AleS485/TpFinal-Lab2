@@ -82,7 +82,17 @@ create table if not exists resena (
         references cliente(id)
 );
 
-
+create table if not exists noticias (
+    idNoticia int auto_increment primary key,
+    titulo varchar(150) not null,
+    contenido text not null,
+    fecha datetime default current_timestamp,
+    usuarioId int not null,
+    constraint fk_noticias_usuario foreign key (usuarioId)
+        references usuario(id)
+        on update cascade
+        on delete cascade
+);
 
 
 
