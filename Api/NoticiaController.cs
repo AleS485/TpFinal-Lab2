@@ -50,6 +50,13 @@ public class NoticiasController(DataContext contexto) : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest(new { success = false, message = "los datos de la noticia no son validos" });
 
+            var usuarioIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        
+            if (usuarioIdClaim != null)
+            {
+                noticia.UsuarioId = int.Parse(usuarioIdClaim);
+            }
+
             contexto.Noticias.Add(noticia);
             await contexto.SaveChangesAsync();
             
