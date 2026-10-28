@@ -4,6 +4,7 @@ using TpFinal_Lab2.DTO;
 using TpFinal_Lab2.Models;
 using TpFinal_Lab2.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace TpFinal_Lab2.Controllers;
 
@@ -54,7 +55,17 @@ public class VentaController(VentaRepository ventaRepo, JuegoRepository juegoRep
             return View(dto);
         }
 
-        var usuario = usuarioRepo.FindById(1); 
+        var usuarioIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(usuarioIdString))
+        {
+            TempData["Error"] = "No se encontro ese usuario";
+            return View(dto);
+        }
+
+        int usuarioId = Convert.ToInt32(usuarioIdString);
+
+        var usuario = usuarioRepo.FindById(usuarioId); 
         if (usuario == null)
         {
             TempData["Error"] = "El usuario tratando de registrar la venta no existe";
@@ -66,7 +77,7 @@ public class VentaController(VentaRepository ventaRepo, JuegoRepository juegoRep
         {
             Juego = juego,
             Cliente = cliente,
-            Usuario = new Usuario{Id = 1},  // CAMBIAR ESTO DE USUARIO CUANDO PONGAS SESION
+            Usuario = usuario, 
             Cantidad = dto.Cantidad,
             PrecioTotal = dto.Cantidad * juego.Precio,
             FechaHora = DateTime.Now
