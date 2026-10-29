@@ -111,7 +111,7 @@ public class ClienteController(ClienteRepository clienteRepo) : Controller
 
 
 
-
+    [Authorize(Policy = "Administrador")]
     [HttpPost]
     public IActionResult Eliminar(int id)
     {
@@ -153,6 +153,7 @@ public class ClienteController(ClienteRepository clienteRepo) : Controller
         }
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult Detalles(int id)
     {

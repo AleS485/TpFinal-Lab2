@@ -134,6 +134,19 @@ public class VentaController(VentaRepository ventaRepo, JuegoRepository juegoRep
         return RedirectToAction(nameof(Listar));
     }
 
+    [Authorize]
+    [HttpGet]
+    public IActionResult Detalles(int id)
+    {
+        var venta = ventaRepo.GetById(id);
+
+        if (venta == null)
+        {
+            return NotFound();
+        }
+
+        return View(venta);
+    }
 
 
 

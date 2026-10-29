@@ -216,6 +216,7 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         return View(juego);
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult Detalles(int id)
     {
