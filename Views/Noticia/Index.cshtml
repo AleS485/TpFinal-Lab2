@@ -1,0 +1,28 @@
+@model IEnumerable<TpFinal_Lab2.Models.Noticia>
+
+<div class="container my-4">
+    <h2 class="mb-4 text-center">NOTICIAS</h2>
+
+    <div class="row">
+        @foreach (var noticia in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0 rounded-3">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold text-dark">@noticia.Titulo</h5>
+                        <h6 class="card-subtitle mb-2 text-muted small">@noticia.Fecha.ToString("dd/MM/yyyy")</h6>
+                        
+
+                        <p class="card-text text-secondary flex-grow-1 text-truncate">
+                            @noticia.Contenido
+                        </p>
+
+                        <div class="text-end mt-3">
+                            <a asp-action="Detalles" asp-route-id="@noticia.IdNoticia" class="btn btn-outline-primary btn-sm px-4">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
