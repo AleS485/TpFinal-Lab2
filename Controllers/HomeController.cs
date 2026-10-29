@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TpFinal_Lab2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TpFinal_Lab2.Controllers;
 
@@ -11,6 +12,11 @@ public class HomeController : Controller
         return View();
     }
 
+    [AllowAnonymous]
+    public IActionResult Restringido()
+    {
+        return View();
+    }
 
     public IActionResult Privacy()
     {

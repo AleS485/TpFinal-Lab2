@@ -85,7 +85,7 @@ public class ImagenJuegoController([FromServices] IWebHostEnvironment environmen
         return Ok(juego.Imagenes);
     }
 
-    [Authorize(Policy = "Administrador")]
+    [Authorize]
     public IActionResult Eliminar(int id)
     {
         if (id <= 0)

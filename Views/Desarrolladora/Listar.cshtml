@@ -35,8 +35,11 @@
                         <td class="fw-semibold text-dark">{{ desarrolladora.nombre }}</td>
                         <td class="fw-semibold text-dark">{{ desarrolladora.web }}</td>
                         <td class="text-end pe-3">
-                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1" @@click="mostrarEditar(desarrolladora)">✏️ Editar</button>  
-                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" @@click="mostrarEliminacion(desarrolladora.id)">❌ Eliminar</button>
+                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1" @@click="mostrarEditar(desarrolladora)">✏️ Editar</button>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" @@click="mostrarEliminacion(desarrolladora.id)">❌ Eliminar</button>
+                            }  
                         </td>
                     </tr>
                     <tr v-if="desarrolladoras.length == 0">
