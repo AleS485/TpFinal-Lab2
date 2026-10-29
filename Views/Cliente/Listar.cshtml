@@ -40,6 +40,7 @@
                         <td class="fw-semibold text-dark">{{ cliente.telefono }}</td>
                         <td class="fw-semibold text-dark">{{ cliente.email }}</td>
                         <td class="text-end pe-3">
+                            <a :href="'/Cliente/Detalles/' + cliente.id" class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1">🪪 Detalles</a>
                             <button class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1" @@click="mostrarEditar(cliente)">✏️ Editar</button>  
                             <button class="btn btn-sm btn-outline-danger rounded-pill px-3" @@click="mostrarEliminacion(cliente.id)">❌ Eliminar</button>
                         </td>

@@ -153,6 +153,18 @@ public class ClienteController(ClienteRepository clienteRepo) : Controller
         }
     }
 
+    [HttpGet]
+    public IActionResult Detalles(int id)
+    {
+        var cliente = clienteRepo.FindById(id); 
+
+        if (cliente == null)
+        {
+            return NotFound();
+        }
+
+        return View(cliente);
+    }
 
 
 }
