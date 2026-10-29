@@ -172,13 +172,17 @@ public class JuegoRepository(IConfiguration configuration) : RepositorioBase(con
 
     public void ActualizarStock(int juegoId, int nuevoStock)
     {
-        var query = "UPDATE juego SET stock = @stock WHERE id = @id";
+        int stockFinal = nuevoStock >= 0 ? nuevoStock : 0;
+        bool nuevoEstado = stockFinal > 0; 
+
+        var query = "UPDATE juego SET stock = @stock, estado = @estado WHERE id = @id";
 
         using MySqlConnection connection = new(connectionString);
         using MySqlCommand command = new(query, connection);
         
         command.Parameters.AddWithValue("@stock", nuevoStock);
-command.Parameters.AddWithValue("@id", juegoId);
+        command.Parameters.AddWithValue("@estado", nuevoEstado);
+        command.Parameters.AddWithValue("@id", juegoId);
         
         connection.Open();
         command.ExecuteNonQuery();
