@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TpFinal_Lab2.Controllers;
 
-public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository desarrolladoraRepo) : Controller
+public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository desarrolladoraRepo, ImagenJuegoRepository imagenRepo) : Controller
 {
 
     [Authorize]
@@ -216,6 +216,20 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         return View(juego);
     }
 
+    [HttpGet]
+    public IActionResult Detalles(int id)
+    {
+        var juego = juegoRepo.FindById(id); 
+
+        if (juego == null)
+        {
+            return NotFound();
+        }
+
+        imagenRepo.Load(juego);
+
+        return View(juego);
+    }
 
 
 }

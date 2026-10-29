@@ -1,0 +1,94 @@
+@model TpFinal_Lab2.Models.Juego
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    
+                    <h2 class="fw-bold text-dark mb-4 pb-2 border-bottom">🎮 Detalles del Juego</h2>
+
+                    <div class="text-secondary fs-6 mb-4">
+                        <p class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-controller text-dark me-3 fs-5"></i>
+                            <strong class="text-dark me-2">Titulo:</strong> @Model.Titulo
+                        </p>
+                        <p class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-tag text-dark me-3 fs-5"></i>
+                            <strong class="text-dark me-2">Genero:</strong> @Model.Genero
+                        </p>
+                        <p class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-file-text text-dark me-3 fs-5"></i>
+                            <strong class="text-dark me-2">Descripcion:</strong> @(string.IsNullOrEmpty(Model.Descripcion) ? "N/A" : Model.Descripcion)
+                        </p>
+                        <p class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-currency-dollar text-dark me-3 fs-5"></i>
+                            <strong class="text-dark me-2">Precio:</strong> $@Model.Precio
+                        </p>
+                        <p class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-box-seam text-dark me-3 fs-5"></i>
+                            <strong class="text-dark me-2">Stock:</strong> @Model.Stock
+                        </p>
+                        <p class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-toggle-on text-dark me-3 fs-5"></i>
+                            <strong class="text-dark me-2">Disponible?:</strong> @(Model.Estado ? "Si" : "No")
+                        </p>
+                        <p class="mb-4 d-flex align-items-center">
+                            <i class="bi bi-building text-dark me-3 fs-5"></i>
+                            <strong class="text-dark me-2">Desarrolladora:</strong> @(Model.Desarrolladora?.Nombre ?? "N/A")
+                        </p>
+                    </div>
+
+                    <div class="mb-4 pt-3 border-top">
+                        <h5 class="fw-bold text-dark mb-3">🖼️ Portada</h5>
+                        <div class="p-3 bg-light rounded-4 border text-center d-flex align-items-center justify-content-center">
+                            @if (Model.Portada?.Url != null)
+                            {
+                                <img src="@Model.Portada.Url" class="img-fluid rounded-3 shadow-sm w-50" />
+                            }
+                            else
+                            {
+                                <span class="text-muted"> No se cargo una portada</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-4 pt-3 border-top">
+                        <h5 class="fw-bold text-dark mb-3">📸 Imagenes in-game</h5>
+                        
+                        <div class="p-3 bg-light rounded-4 border">
+                            @if (Model.Imagenes.Count > 0)
+                            {
+                                <div class="row g-2 justify-content-center">
+                                    @foreach (var img in Model.Imagenes)
+                                    {
+                                        <div class="col-6 col-md-4 col-lg-3">
+                                            <div class="card border-0 shadow-sm h-100 bg-white p-1 rounded-3">
+                                                @if (img?.Url != null)
+                                                {
+                                                    <img src="@img.Url" class="img-fluid rounded-2 w-100" />
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted text-center mb-0"> No se cargaron imagenes in-game </p>
+                            }
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-start pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-outline-dark px-4 rounded-pill">
+                            <i class="bi bi-arrow-left me-2"></i> Volver a Juegos
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
