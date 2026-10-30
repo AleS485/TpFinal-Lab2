@@ -18,15 +18,15 @@ public class JuegoDTO
 
     [Required(ErrorMessage = "El precio es obligatorio")]
     [Range(0, 9999999.99, ErrorMessage = "El precio debe ser un valor positivo")]
-    public decimal Precio { get; set; }
+    public decimal? Precio { get; set; }
 
     [Required(ErrorMessage = "El stock es obligatorio")]
     [Range(0, 100000, ErrorMessage = "El stock debe estar entre 0 y 100.000")]
-    public required int Stock { get; set; }
+    public required int? Stock { get; set; }
 
     public bool Estado { get; set; } = true;
 
     [Required(ErrorMessage = "La desarrolladora es obligatoria")]
     [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar una desarrolladora que exista")]
-    public required int DesarrolladoraId { get; set; }
+    public required int? DesarrolladoraId { get; set; }
 }

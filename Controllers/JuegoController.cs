@@ -37,7 +37,7 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
             return View(dto);
         }
 
-        var desarrolladora = desarrolladoraRepo.FindById(dto.DesarrolladoraId);
+        var desarrolladora = desarrolladoraRepo.FindById(dto.DesarrolladoraId ?? 0);
         
         if (desarrolladora == null)
         {
@@ -54,8 +54,8 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
             Titulo = dto.Titulo,
             Genero = dto.Genero,
             Descripcion = dto.Descripcion,
-            Precio = dto.Precio,
-            Stock = dto.Stock,
+            Precio = dto.Precio.Value,
+            Stock = dto.Stock.Value,
             Estado = dto.Estado,
             Desarrolladora = desarrolladora 
         };
@@ -108,7 +108,7 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
             return View(dto);
         }
 
-        var desarrolladora = desarrolladoraRepo.FindById(dto.DesarrolladoraId);
+        var desarrolladora = desarrolladoraRepo.FindById(dto.DesarrolladoraId ?? 0);
         if (desarrolladora == null)
         {
             ModelState.AddModelError("DesarrolladoraId", "Esa desarrolladora no existe");
@@ -126,8 +126,8 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
             Titulo = dto.Titulo,
             Genero = dto.Genero,
             Descripcion = dto.Descripcion,
-            Precio = dto.Precio,
-            Stock = dto.Stock,
+            Precio = dto.Precio.Value,
+            Stock = dto.Stock.Value,
             Estado = dto.Estado,
             Desarrolladora = desarrolladora 
         };
