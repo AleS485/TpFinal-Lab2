@@ -1,6 +1,17 @@
 @model TpFinal_Lab2.Models.Usuario
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Editar Empleado";
+
+
+    int idLogueado = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+    
+    bool propio;
+    if (Model.Id == idLogueado) {
+        propio = true;
+    } else {
+        propio = false;
+    }
 }
 
 <div id="editarUsuario" class="container py-5">
@@ -58,6 +69,18 @@
                             <img v-bind:src="preview" width="120" height="120" class="rounded-circle border object-fit-cover shadow-sm">
                         </div>
                     </div>
+
+                    @if (User.IsInRole("Administrador") && !propio)
+                    {
+                        <div class="mb-3 form-check">
+                            <input asp-for="Estado" class="form-check-input border" type="checkbox">
+                            <label asp-for="Estado" class="form-check-label text-dark fw-bold">Disponible / Activo?</label>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="Estado" />
+                    }
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-dark rounded-pill py-2">Guardar Cambios 💾</button>

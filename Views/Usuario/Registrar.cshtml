@@ -43,10 +43,15 @@
                     <div class="mb-4">
                         <label class="form-label text-dark fw-semibold">Avatar / Foto: </label>
                         <input type="file" name="avatarFile" v-on:change="previsualizar" class="form-control rounded-3" accept="image/*" />
-                        
+
                         <div class="text-center mt-3" v-if="preview">
                             <img v-bind:src="preview" width="120" height="120" class="rounded-circle border object-fit-cover shadow-sm" />
                         </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="Estado" class="form-check-input border" type="checkbox">
+                        <label asp-for="Estado" class="form-check-label text-dark fw-bold">Disponible?</label>
                     </div>
 
                     <div class="d-grid gap-2">

@@ -43,6 +43,12 @@ public class UsuarioController(UsuarioRepository usuarioRepo) : Controller
                 return View();
             }
 
+            if (!usuario.Estado)
+            {
+                ViewBag.Error = "Este usuario esta desactivado del sistema.";
+                return View();
+            }
+
             var ok = hasher.VerifyHashedPassword(usuario, usuario.Password, password);  
             if (ok != PasswordVerificationResult.Success)
             {
@@ -161,9 +167,16 @@ public class UsuarioController(UsuarioRepository usuarioRepo) : Controller
         if (actual == null) return NotFound();
         usuario.AvatarUrl = actual.AvatarUrl;
 
-        if (!User.IsInRole("Administrador"))
+        int idLogueado = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        if (!User.IsInRole("Administrador") || usuario.Id == idLogueado)
         {
-            usuario.Role = actual.Role;
+            usuario.Estado = actual.Estado;
+
+            if (!User.IsInRole("Administrador"))
+            {
+                usuario.Role = actual.Role;
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(nuevaPassword))
@@ -219,6 +232,15 @@ public class UsuarioController(UsuarioRepository usuarioRepo) : Controller
     [HttpPost]
     public IActionResult Eliminar(Usuario usuario)
     {
+
+        int idLogueado = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        if (usuario.Id == idLogueado)
+        {
+            TempData["Error"] = "No te podes borrar a vos mismo.";
+            return RedirectToAction(nameof(Listar));
+        }
+
         usuarioRepo.Delete(usuario.Id);
         TempData["Mensaje"] = "El usuario fue dado de baja del sistema.";
         return RedirectToAction(nameof(Listar));
