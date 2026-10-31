@@ -13,6 +13,6 @@ public class VentaDTO
     public required int? ClienteId { get; set; }
 
     [Required(ErrorMessage = "La cantidad es obligatoria")]
-    [Range(1, 100, ErrorMessage = "La cantidad debe ser de al menos 1 unidad")]
+    [Range(1, 100000, ErrorMessage = "La cantidad debe ser de al menos 1 unidad")]
     public required int Cantidad { get; set; } = 1;
 }
