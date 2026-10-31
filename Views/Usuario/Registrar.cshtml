@@ -13,12 +13,14 @@
                     
                     <div class="mb-3">
                         <label class="form-label text-dark fw-semibold">Nombre: </label>
-                        <input type="text" name="Nombre" v-model="nombre" class="form-control rounded-3" required />
+                        <input type="text" name="Nombre" v-model="nombre" class="form-control rounded-3" required/>
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-dark fw-semibold">Apellido: </label>
                         <input type="text" name="Apellido" v-model="apellido" class="form-control rounded-3" required />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
@@ -30,6 +32,7 @@
                     <div class="mb-3">
                         <label class="form-label text-dark fw-semibold">Contraseña: </label>
                         <input type="password" name="Password" class="form-control rounded-3" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
@@ -38,6 +41,7 @@
                             <option value="Empleado">Empleado</option>
                             <option value="Administrador">Administrador</option>
                         </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
 
                     <div class="mb-4">

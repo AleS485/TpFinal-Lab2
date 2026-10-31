@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Editar Empleado";
 
-
     int idLogueado = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
     
     bool propio;
@@ -12,6 +11,7 @@
     } else {
         propio = false;
     }
+
 }
 
 <div id="editarUsuario" class="container py-5">
@@ -22,26 +22,34 @@
 
                 <form asp-action="Editar" method="post" enctype="multipart/form-data">
                     
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+
                     <input type="hidden" asp-for="Id" />
 
                     <div class="mb-3">
                         <label class="form-label text-dark fw-semibold">Nombre: </label>
-                        <input type="text" name="nombre" class="form-control rounded-3" value="@Model.Nombre" required>
+                        <input type="text" name="Nombre" class="form-control rounded-3" value="@Model.Nombre" required>
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-dark fw-semibold">Apellido: </label>
-                        <input type="text" name="apellido" class="form-control rounded-3" value="@Model.Apellido" required>
+                        <input type="text" name="Apellido" class="form-control rounded-3" value="@Model.Apellido" required>
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-dark fw-semibold">Email: </label>
-                        <input type="email" name="email" class="form-control rounded-3" value="@Model.Email" required>
+                        <input type="email" name="Email" class="form-control rounded-3" value="@Model.Email" required>
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-dark fw-semibold">Cambiar Contrasena: </label>
-                        <input type="password" name="nuevaPassword" class="form-control rounded-3" placeholder="Esto es opcional" autocomplete="new-password">
+                        <input type="password" name="nuevaPassword" class="form-control rounded-3" placeholder="Esto es opcional" >
                         <small class="text-muted">Rellena si queres cambiar la contrasena</small>
                     </div>
 
@@ -49,7 +57,7 @@
                     {
                         <div class="mb-3">
                             <label class="form-label text-dark fw-semibold">Rol: </label>
-                            <select asp-for="Role" class="form-select rounded-3" required>
+                            <select asp-for="Role" class="form-select rounded-3" >
                                 <option value="Empleado">Empleado</option>
                                 <option value="Administrador">Administrador</option>
                             </select>
@@ -76,10 +84,6 @@
                             <input asp-for="Estado" class="form-check-input border" type="checkbox">
                             <label asp-for="Estado" class="form-check-label text-dark fw-bold">Disponible / Activo?</label>
                         </div>
-                    }
-                    else
-                    {
-                        <input type="hidden" asp-for="Estado" />
                     }
 
                     <div class="d-grid gap-2">

@@ -6,25 +6,25 @@ public class Usuario
     [Key]
     public int Id {get; set;}
 
-    [Required]
+    [Required(ErrorMessage = "El nombre es obligatorio")]
     public string? Nombre {get; set;}
 
-    [Required]
+    [Required(ErrorMessage = "El apellido es obligatorio")]
     public string? Apellido {get; set;}
 
-    [Required]
-    [EmailAddress]
+    [Required(ErrorMessage = "El email es obligatorio")]
+    [EmailAddress(ErrorMessage = "El formato del email no es válido")]
     public string? Email {get; set;}
 
-    [Required]
+    [Required(ErrorMessage = "La contrasena es obligatoria")]
     public string? Password {get; set;}
 
-    [Required]
+    [Required(ErrorMessage = "Tenes que seleccionar un rol")]
     public string? Role {get; set;}
 
     public string? AvatarUrl {get; set;}
 
-    public bool Estado{get; set;} = true;
+    public bool Estado{get; set;}
 
     public override string ToString()
     {

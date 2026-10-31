@@ -165,6 +165,17 @@ public class UsuarioController(UsuarioRepository usuarioRepo) : Controller
     {
         var actual = usuarioRepo.FindById(usuario.Id);
         if (actual == null) return NotFound();
+
+
+        if (string.IsNullOrWhiteSpace(usuario.Nombre) ||
+        string.IsNullOrWhiteSpace(usuario.Apellido) ||
+        string.IsNullOrWhiteSpace(usuario.Email))
+        {
+            ViewBag.Error = "No podes dejar el nombre, apellido y mail vacios";
+            usuario.AvatarUrl = actual.AvatarUrl;
+            return View(usuario);
+        }
+
         usuario.AvatarUrl = actual.AvatarUrl;
 
         int idLogueado = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
