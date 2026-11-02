@@ -32,5 +32,5 @@ Para probar el sistema de forma rápida, podés utilizar las siguientes cuentas 
 | **3. Manejo de Archivos (Extra)** | ✅ Cumplido | [ImagenJuegoController.cs] [Views/Juego/Imagenes.cshtml] | ![Fotos](docs/fotos.png)  |
 | **4. ABM en Vue.js + AJAX** | ✅ Cumplido | [DesarrolladoraController.cs] [Views/Desarrolladora/Listar.cshtml] | ![Ajax](docs/ajax.png) |
 | **5. Paginado por Servidor** | ✅ Cumplido | [JuegoController.cs] | ![Paginado](docs/paginado.png) |
-| **6. Selección Asíncrona (AJAX)** | ✅ Cumplido | [ClienteController.cs] [Views/Cliente/Listar.cshtml] | ![Seleccionado](docs/seleccionado.png) |
+| **6. Selección Asíncrona (AJAX)** | ✅ Cumplido | [DesarrolladoraController.cs] [Views/Desarrolladora/Listar.cshtml] | ![Seleccionado](docs/seleccionado.png) |
 | **7. Web API + JWT** | ✅ Cumplido | [Program.cs] [Api/NoticiaController.cs] [UsuariosApiController.cs] | ![Api](docs/api.png) |
