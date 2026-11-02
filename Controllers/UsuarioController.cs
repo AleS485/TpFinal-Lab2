@@ -252,6 +252,13 @@ public class UsuarioController(UsuarioRepository usuarioRepo) : Controller
             return RedirectToAction(nameof(Listar));
         }
 
+        bool tieneVentas = usuarioRepo.TieneVentasAsociadas(usuario.Id);
+        if (tieneVentas)
+        {
+            TempData["Error"] = "No se puede borrar ese usuario porque tiene ventas registradas en el sistema.";
+            return RedirectToAction(nameof(Listar));
+        }
+
         usuarioRepo.Delete(usuario.Id);
         TempData["Mensaje"] = "El usuario fue dado de baja del sistema.";
         return RedirectToAction(nameof(Listar));

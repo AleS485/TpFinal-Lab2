@@ -169,5 +169,7 @@ public class VentaRepository(IConfiguration config) : RepositorioBase(config)
         return command.ExecuteNonQuery();
     }
 
+    
+
 }
 

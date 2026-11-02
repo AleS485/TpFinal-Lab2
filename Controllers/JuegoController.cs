@@ -17,6 +17,9 @@ public class JuegoController(JuegoRepository juegoRepo, DesarrolladoraRepository
         int tamano = 10; 
         var lista = juegoRepo.ListAll(pagina, tamano); 
     
+        ViewBag.Pagina = pagina;
+        ViewBag.HaySiguiente = lista.Count == tamano;
+
         return View(lista);
     }
 

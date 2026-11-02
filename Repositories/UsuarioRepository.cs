@@ -198,7 +198,19 @@ public class UsuarioRepository(IConfiguration config, IWebHostEnvironment enviro
         command.ExecuteNonQuery();
     }
 
+    public bool TieneVentasAsociadas(int usuarioId)
+    {
+        var query = @"SELECT COUNT(1) FROM venta WHERE usuario_id = @usuario_id";
 
+        using MySqlConnection connection = new(connectionString);
+        using MySqlCommand command = new(query, connection);
+        command.Parameters.AddWithValue("@usuario_id", usuarioId);
+
+        connection.Open();
+        int count = Convert.ToInt32(command.ExecuteScalar());
+        
+        return count > 0;
+    }
 
 
 }

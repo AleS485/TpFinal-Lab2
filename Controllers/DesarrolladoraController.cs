@@ -56,7 +56,7 @@ public class DesarrolladoraController(DesarrolladoraRepository desarrolladoraRep
     [HttpGet]
     public IActionResult TraerDesarrolladoras(int pagina = 1)
     {
-        int tamano = 5;
+        int tamano = 10;
         var lista = desarrolladoraRepo.ListAll(pagina, tamano);
 
         bool haySiguiente = lista.Count == tamano;
