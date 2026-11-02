@@ -4,7 +4,7 @@ using TpFinal_Lab2.Models;
 
 namespace TpFinal_Lab2.Repositories;
 
-public class ImagenJuegoRepository(IConfiguration config, [FromServices] IWebHostEnvironment environment, JuegoRepository repoJuego) : RepositorioBase(config)
+public class ImagenJuegoRepository(IConfiguration config, IWebHostEnvironment environment, JuegoRepository repoJuego) : RepositorioBase(config)
 {
     
     public int Upload(ImagenJuego img, Juego juego, IFormFile file)
