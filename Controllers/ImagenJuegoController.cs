@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TpFinal_Lab2.Controllers;
 
-public class ImagenJuegoController([FromServices] IWebHostEnvironment environment, JuegoRepository juegoRepo, ImagenJuegoRepository imagenRepo) : Controller
+public class ImagenJuegoController(IWebHostEnvironment environment, JuegoRepository juegoRepo, ImagenJuegoRepository imagenRepo) : Controller
 {
 
     [Authorize]
