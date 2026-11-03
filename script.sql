@@ -68,19 +68,6 @@ create table if not exists venta (
         references usuario(id)
 );
 
-create table if not exists resena (
-    id int auto_increment primary key,
-    calificacion int not null,
-    comentario text default null,
-    fecha datetime default current_timestamp,
-    estado boolean default true,
-    juego_id int not null,
-    cliente_id int not null,
-    constraint fk_resena_juego foreign key (juego_id)
-        references juego(id),
-    constraint fk_resena_cliente foreign key (cliente_id)
-        references cliente(id)
-);
 
 create table if not exists noticias (
     idNoticia int auto_increment primary key,
@@ -192,22 +179,7 @@ INSERT INTO venta (cantidad, precio_total, juego_id, cliente_id, usuario_id) VAL
 
 
 
-INSERT INTO resena (calificacion, comentario, estado, juego_id, cliente_id) VALUES 
-(5, 'El mejor juego de la saga, historia excelente.', 1, 1, 1),
-(5, 'Impresionante la cantidad de contenido.', 1, 2, 2),
-(4, 'Gráficamente una bestia tras los parches.', 1, 3, 3),
-(5, 'Obra maestra absoluta.', 1, 5, 4),
-(5, 'El sistema de combate evolucionó genial.', 1, 6, 5),
-(3, 'Entretenido pero muy repetitivo.', 1, 7, 6),
-(4, 'Para jugar con amigos está muy bien.', 1, 8, 7),
-(5, 'Historia y narrativa de 10.', 1, 9, 8),
-(5, 'Divertidísimo para todas las edades.', 1, 10, 9),
-(4, 'Muy buenos gráficos y fluidez.', 1, 11, 10),
-(3, 'Le falta más vida en los planetas.', 1, 12, 11),
-(5, 'Un clásico eterno.', 1, 13, 12),
-(4, 'Excelente remasterización.', 1, 14, 13),
-(5, 'Revolucionó los videojuegos para siempre.', 1, 15, 14),
-(5, 'Imprescindible jugarlo al menos una vez.', 1, 4, 15);
+
 
 
 
