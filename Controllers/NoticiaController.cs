@@ -9,13 +9,22 @@ public class NoticiaController(DataContext contexto, UsuarioRepository usuariosR
 {
 
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(int pagina = 1)
     {
+        int cantPorPagina = 10;
+
+        int totalNoticias = contexto.Noticias.Count();
+        
         var listaNoticias = contexto.Noticias
-            .OrderBy(n => n.Fecha)
+            .OrderByDescending(n => n.Fecha)
+            .Skip((pagina - 1) * cantPorPagina)
+            .Take(cantPorPagina)
             .ToList();
 
-        listaNoticias.Reverse();
+        bool haySiguiente = (pagina * cantPorPagina) < totalNoticias;
+
+        ViewBag.Pagina = pagina;
+        ViewBag.HaySiguiente = haySiguiente;
 
         return View(listaNoticias);
     }

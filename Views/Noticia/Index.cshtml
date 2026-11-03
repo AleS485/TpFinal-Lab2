@@ -1,4 +1,9 @@
 @model IEnumerable<TpFinal_Lab2.Models.Noticia>
+@{
+    var paginaActual = ViewBag.Pagina ?? 1;
+    var haySiguiente = ViewBag.HaySiguiente ?? false;
+}
+
 
 <div class="container my-4">
     <h2 class="mb-4 text-center">NOTICIAS</h2>
@@ -25,4 +30,44 @@
             </div>
         }
     </div>
+
+    <nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        @if (paginaActual > 1)
+        {
+            <li class="page-item">
+                <a class="page-link bg-dark text-light border-secondary" asp-action="Index" asp-route-pagina="@(paginaActual - 1)" aria-label="Anterior">
+                    Anterior
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link bg-dark text-secondary border-secondary">Anterior</span>
+            </li>
+        }
+
+        <li class="page-item active">
+            <span class="page-link bg-primary border-primary">@paginaActual</span>
+        </li>
+
+        
+        @if (haySiguiente)
+        {
+            <li class="page-item">
+                <a class="page-link bg-secondary border-secondary text-white fw-bold" asp-action="Index" asp-route-pagina="@(paginaActual + 1)" aria-label="Siguiente">
+                    Siguiente
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link bg-dark text-secondary border-secondary">Siguiente</span>
+            </li>
+        }
+    </ul>
+</nav>
+
 </div>
