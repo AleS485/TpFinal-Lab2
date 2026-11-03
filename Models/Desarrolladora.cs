@@ -6,7 +6,7 @@ public class Desarrolladora
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "El nombre es obligatorio")]
     public string? Nombre { get; set; }
 
     public string? Web { get; set; }
